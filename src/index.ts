@@ -9,9 +9,13 @@ const bot = Discordeno.createBot({
     Discordeno.Intents.GuildMessages |
     Discordeno.Intents.MessageContent,
   events: {
-    ready: () => {
+    ready: (bot) => {
       console.log("launch");
       console.log(`memory dir path: ${Deno.env.get("MEMORY_DIR_PATH")}`);
+
+      bot.helpers.sendMessage(BigInt(Deno.env.get("DISCORD_LOG_CHANNEL")!), {
+        content: "起動しました！",
+      });
     },
     messageCreate: async (bot, message) => {
       if (message.isFromBot) return;
