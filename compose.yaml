@@ -8,9 +8,13 @@ services:
         GID: ${GID:-1000}
     volumes:
       - ./:${DIR:-/workspaces/discord-chatbot/}
+      - ./volumes/chatbot-memory/:/workspaces/memory/
     working_dir: ${DIR:-/workspaces/discord-chatbot/}
     tty: true
     command: bash
     environment:
       DISCORD_TOKEN: ${DISCORD_TOKEN}
-      GUILD_ID: ${GUILD_ID}
+      DISCORD_LOG_CHANNEL: ${DISCORD_LOG_CHANNEL}
+      OPENAI_TOKEN: ${OPENAI_TOKEN}
+      MEMORY_DIR_PATH: ${MEMORY_DIR_PATH}
+      MEMORY_NUM: ${MEMORY_NUM}

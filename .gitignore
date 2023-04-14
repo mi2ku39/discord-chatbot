@@ -1,2 +1,4 @@
 /.env
 /.vscode
+/volumes/*
+!/volumes/.keep
