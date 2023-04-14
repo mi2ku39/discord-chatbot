@@ -3,11 +3,18 @@ services:
   app:
     build:
       context: ./
-      dockerfile: prod.Dockerfile
+      dockerfile: Dockerfile
       args:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
         DISCORD_TOKEN: ${DISCORD_TOKEN}
         GUILD_ID: ${GUILD_ID}
     working_dir: ${DIR:-/workspaces/discord-chatbot/}
+    command: deno task run
     restart: always
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_LOG_CHANNEL: ${DISCORD_LOG_CHANNEL}
+      OPENAI_TOKEN: ${OPENAI_TOKEN}
+      MEMORY_DIR_PATH: ${MEMORY_DIR_PATH}
+      MEMORY_NUM: ${MEMORY_NUM}
