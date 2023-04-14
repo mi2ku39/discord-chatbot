@@ -3,10 +3,12 @@ services:
   app:
     build:
       context: ./
-      dockerfile: Dockerfile
       args:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
+    volumes:
+      - ./:${DIR:-/workspaces/discord-chatbot/}
+      - ./volumes/chatbot-memory/:/workspaces/memory/
     working_dir: ${DIR:-/workspaces/discord-chatbot/}
     command: deno task start
     restart: always
