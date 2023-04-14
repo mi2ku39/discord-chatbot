@@ -1,0 +1,13 @@
+version: "3"
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: prod.Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+        DISCORD_TOKEN: ${DISCORD_TOKEN}
+        GUILD_ID: ${GUILD_ID}
+    working_dir: ${DIR:-/workspaces/discord-chatbot/}
+    restart: always

@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  app:
+    build:
+      context: ./
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    volumes:
+      - ./:${DIR:-/workspaces/discord-chatbot/}
+    working_dir: ${DIR:-/workspaces/discord-chatbot/}
+    tty: true
+    command: bash
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      GUILD_ID: ${GUILD_ID}
