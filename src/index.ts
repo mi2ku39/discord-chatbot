@@ -32,10 +32,13 @@ const bot = Discordeno.createBot({
         const obj: OpenAiResponse = await res.json();
 
         obj.choices.forEach(({ message: { role, content } }) => {
+          console.dir(message);
           bot.helpers.sendMessage(message.channelId, {
             content,
             messageReference: {
-              ...message.messageReference,
+              channelId: message.channelId,
+              guildId: message.guildId,
+              messageId: message.id,
               failIfNotExists: false,
             },
           });
