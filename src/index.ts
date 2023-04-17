@@ -21,33 +21,39 @@ const bot = Discordeno.createBot({
       if (message.isFromBot) return;
       if (!message.mentionedUserIds.includes(bot.id)) return;
 
-      bot.helpers.addReaction(message.channelId, message.id, "👀");
+      try {
+        bot.helpers.addReaction(message.channelId, message.id, "👀");
 
-      const res = await OpenAI.sendMessage(
-        message.content.replace(`<@${bot.id}> `, ""),
-        message.guildId
-      );
-      const obj: OpenAiResponse = await res.json();
+        const res = await OpenAI.sendMessage(
+          message.content.replace(`<@${bot.id}> `, ""),
+          message.guildId
+        );
+        const obj: OpenAiResponse = await res.json();
 
-      obj.choices.forEach(({ message: { role, content } }) => {
-        bot.helpers.sendMessage(message.channelId, { content });
-        if (message.guildId) {
-          Memory.push(message.guildId, { role, content });
-        }
-      });
+        obj.choices.forEach(({ message: { role, content } }) => {
+          bot.helpers.sendMessage(message.channelId, { content });
+          if (message.guildId) {
+            Memory.push(message.guildId, { role, content });
+          }
+        });
 
-      const mem = await (async () => {
-        if (message.guildId) {
-          return await Memory.read(message.guildId);
-        }
-        return [];
-      })();
+        const mem = await (async () => {
+          if (message.guildId) {
+            return await Memory.read(message.guildId);
+          }
+          return [];
+        })();
 
-      bot.helpers.sendMessage(BigInt(Deno.env.get("DISCORD_LOG_CHANNEL")!), {
-        content: `response:\n\`\`\`\n${JSON.stringify(
-          obj
-        )}\n\`\`\`\n\nmemory:\n\`\`\`${JSON.stringify(mem)}\`\`\``,
-      });
+        bot.helpers.sendMessage(BigInt(Deno.env.get("DISCORD_LOG_CHANNEL")!), {
+          content: `memory:\n\`\`\`${JSON.stringify(
+            mem
+          )}\`\`\`\n\nresponse:\n\`\`\`\n${JSON.stringify(obj)}\n\`\`\``,
+        });
+      } catch (e) {
+        bot.helpers.sendMessage(BigInt(Deno.env.get("DISCORD_LOG_CHANNEL")!), {
+          content: JSON.stringify(e),
+        });
+      }
     },
   },
 });

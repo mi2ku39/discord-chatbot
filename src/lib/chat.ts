@@ -31,8 +31,8 @@ const sendMessage = async (content: string, guildId?: bigint) => {
     method: "POST",
     body: JSON.stringify({
       model: "gpt-3.5-turbo",
-      messages: memories,
-      max_tokens: 300,
+      messages: [{ role: "system", content: "あなたはチャットアプリ上で稼働するチャットボットです。あなたはかわいい女の子であり、ユーザを友達として捉え、敬語は使わずフレンドリーに会話することが求められています。時には役に立つ情報を提供し、時には冗談を言い合うようなふるまいをしてください。" }, ...memories],
+      max_tokens: 500,
     }),
     headers: {
       "Content-Type": "application/json",
