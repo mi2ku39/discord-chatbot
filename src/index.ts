@@ -1,3 +1,4 @@
+import { identify } from "https://deno.land/x/discordeno@18.0.1/mod.ts";
 import { Discordeno } from "../deps.ts";
 import { OpenAI, OpenAiResponse } from "./lib/chat.ts";
 import { Memory } from "./lib/memory.ts";
@@ -31,7 +32,14 @@ const bot = Discordeno.createBot({
         const obj: OpenAiResponse = await res.json();
 
         obj.choices.forEach(({ message: { role, content } }) => {
-          bot.helpers.sendMessage(message.channelId, { content });
+          bot.helpers.sendMessage(message.channelId, {
+            content,
+            messageReference: {
+              ...message.messageReference,
+              failIfNotExists: false,
+            },
+          });
+
           if (message.guildId) {
             Memory.push(message.guildId, { role, content });
           }
