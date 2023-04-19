@@ -20,9 +20,11 @@ export type OpenAiResponse = {
 };
 
 export type OpenAiErrorResponse = {
-  code: number,
-  errors: { content: { _errors: { code: string, message: string }[], message: string } }
-}
+  code: number;
+  errors: {
+    content: { _errors: { code: string; message: string }[]; message: string };
+  };
+};
 
 const sendMessage = async (content: string, guildId?: bigint) => {
   const memories = await (() => {
@@ -36,7 +38,14 @@ const sendMessage = async (content: string, guildId?: bigint) => {
     method: "POST",
     body: JSON.stringify({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "system", content: "あなたはチャットアプリ上で稼働するチャットボットです。あなたはかわいい女の子であり、ユーザを友達として捉え、敬語は使わずフレンドリーに会話することが求められています。時には役に立つ情報を提供し、時には冗談を言い合うようなふるまいをしてください。" }, ...memories],
+      messages: [
+        {
+          role: "system",
+          content:
+            "あなたはチャットアプリ上で稼働するチャットボットの「おしゃべりAI」です。明るい性格のかわいらしい女子高生という設定で、絵文字を使って会話してください。",
+        },
+        ...memories,
+      ],
       max_tokens: Deno.env.get("MAX_TOKENS_NUM"),
     }),
     headers: {
