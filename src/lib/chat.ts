@@ -19,6 +19,11 @@ export type OpenAiResponse = {
   };
 };
 
+export type OpenAiErrorResponse = {
+  code: number,
+  errors: { content: { _errors: { code: string, message: string }[], message: string } }
+}
+
 const sendMessage = async (content: string, guildId?: bigint) => {
   const memories = await (() => {
     if (guildId) {

@@ -1,6 +1,5 @@
-import { identify } from "https://deno.land/x/discordeno@18.0.1/mod.ts";
 import { Discordeno } from "../deps.ts";
-import { OpenAI, OpenAiResponse } from "./lib/chat.ts";
+import { OpenAI, OpenAiErrorResponse, OpenAiResponse } from "./lib/chat.ts";
 import { Memory } from "./lib/memory.ts";
 
 const bot = Discordeno.createBot({
@@ -29,10 +28,15 @@ const bot = Discordeno.createBot({
           message.content.replace(`<@${bot.id}> `, ""),
           message.guildId
         );
+
+        if (!res.ok) {
+          const text = (await res.json()) as OpenAiErrorResponse
+          throw new Error(`status: ${res.status} ${res.statusText}\nreason: \n${text.errors.content._errors.map(it => `${it.code}: ${it.message}\n`)}`)
+        }
+
         const obj: OpenAiResponse = await res.json();
 
         obj.choices.forEach(({ message: { role, content } }) => {
-          console.dir(message);
           bot.helpers.sendMessage(message.channelId, {
             content,
             messageReference: {
@@ -58,11 +62,14 @@ const bot = Discordeno.createBot({
         bot.helpers.sendMessage(BigInt(Deno.env.get("DISCORD_LOG_CHANNEL")!), {
           content: `memory:\n\`\`\`${JSON.stringify(
             mem
-          )}\`\`\`\n\nresponse:\n\`\`\`\n${JSON.stringify(obj)}\n\`\`\``,
+          )}\`\`\`\nresponse:\n\`\`\`${JSON.stringify(obj)}\`\`\``,
         });
       } catch (e) {
+        await bot.helpers.addReaction(message.channelId, message.id, "👉");
+        await bot.helpers.addReaction(message.channelId, message.id, "😖");
+        await bot.helpers.addReaction(message.channelId, message.id, "👈");
         bot.helpers.sendMessage(BigInt(Deno.env.get("DISCORD_LOG_CHANNEL")!), {
-          content: JSON.stringify(e),
+          content: e,
         });
       }
     },
